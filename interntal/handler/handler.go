@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Calendar/interntal/api"
 	"Calendar/interntal/model"
 	"encoding/json"
 	"io"
@@ -38,6 +39,12 @@ func CreateEvent(writter http.ResponseWriter, request *http.Request) {
 	event.Event = js["event"]
 	event.Date, _ = time.Parse("2000-10-05", js["date"])
 	event.UserID, _ = strconv.Atoi(js["user_id"])
+	event.UUID = api.Calendar.LastUUID + 1
+	api.Calendar.LastUUID = event.UUID
+
+	api.Calendar.CreateEvent(&event)
+	writter.Write([]byte("{result: success"))
+
 	log.Println(event)
 }
 

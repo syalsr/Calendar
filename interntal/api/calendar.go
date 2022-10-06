@@ -6,37 +6,40 @@ import (
 	"time"
 )
 
-type Calendar struct {
-	events map[int]model.Event
+var Calendar = NewCalendar()
+
+type calendar struct {
+	Events   map[int]model.Event
+	LastUUID int
 	sync.RWMutex
 }
 
-func NewCalendar() *Calendar {
-	return &Calendar{events: make(map[int]model.Event)}
+func NewCalendar() *calendar {
+	return &calendar{Events: make(map[int]model.Event)}
 }
 
-func (c *Calendar) CreateEvent(event *model.Event) {
+func (c *calendar) CreateEvent(event *model.Event) {
 	c.Lock()
 	defer c.Unlock()
 
-	c.events[event.UUID] = *event
+	c.Events[event.UUID] = *event
 }
-func (c *Calendar) UpdateEvent(event *model.Event) {
+func (c *calendar) UpdateEvent(event *model.Event) {
 	c.Lock()
 	defer c.Unlock()
 
-	c.events[event.UUID] = *event
+	c.Events[event.UUID] = *event
 }
-func (c *Calendar) DeleteEvent(UUID int) {
+func (c *calendar) DeleteEvent(UUID int) {
 	c.Lock()
 	defer c.Unlock()
 
-	delete(c.events, UUID)
+	delete(c.Events, UUID)
 }
-func (c *Calendar) GetEventPerDay(day time.Time) []model.Event {
+func (c *calendar) GetEventPerDay(day time.Time) []model.Event {
 	var events []model.Event
 
-	for _, event := range c.events {
+	for _, event := range c.Events {
 		if event.Date == day {
 			events = append(events, event)
 		}
@@ -44,10 +47,10 @@ func (c *Calendar) GetEventPerDay(day time.Time) []model.Event {
 	return events
 }
 
-func (c *Calendar) GetEventPerWeek(day time.Time) []model.Event {
+func (c *calendar) GetEventPerWeek(day time.Time) []model.Event {
 	var events []model.Event
 
-	for _, event := range c.events {
+	for _, event := range c.Events {
 		if event.Date.After(day) && event.Date.Before(day.AddDate(0, 0, 7)) {
 			events = append(events, event)
 		}
@@ -55,10 +58,10 @@ func (c *Calendar) GetEventPerWeek(day time.Time) []model.Event {
 	return events
 }
 
-func (c *Calendar) GetEventPerMonth(day time.Time) []model.Event {
+func (c *calendar) GetEventPerMonth(day time.Time) []model.Event {
 	var events []model.Event
 
-	for _, event := range c.events {
+	for _, event := range c.Events {
 		if event.Date.After(day) && event.Date.Before(day.AddDate(0, 1, 0)) {
 			events = append(events, event)
 		}
