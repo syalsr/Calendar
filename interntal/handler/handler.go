@@ -104,7 +104,7 @@ func UpdateEvent(writter http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	event.UUID, err = strconv.Atoi(js["UUID"])
+	event.UUID, err = strconv.Atoi(js["uuid"])
 	if err != nil {
 		log.Println(err)
 		return
@@ -139,7 +139,7 @@ func DeleteEvent(writter http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	event.UUID, err = strconv.Atoi(js["UUID"])
+	event.UUID, err = strconv.Atoi(js["uuid"])
 	if err != nil {
 		log.Println(err)
 		return
@@ -178,7 +178,6 @@ func EventsForDay(writter http.ResponseWriter, request *http.Request) {
 		}
 		writter.Write(js)
 	}
-	writter.WriteHeader(http.StatusOK)
 }
 
 func EventsForWeek(writter http.ResponseWriter, request *http.Request) {
@@ -200,7 +199,7 @@ func EventsForWeek(writter http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	events := api.Calendar.GetEventPerDay(date, userID)
+	events := api.Calendar.GetEventPerWeek(date, userID)
 	for _, event := range events {
 		js, err := json.MarshalIndent(event, "", "\t")
 		if err != nil {
@@ -208,7 +207,6 @@ func EventsForWeek(writter http.ResponseWriter, request *http.Request) {
 		}
 		writter.Write(js)
 	}
-	writter.WriteHeader(http.StatusOK)
 }
 
 func EventsForMonth(writter http.ResponseWriter, request *http.Request) {
@@ -230,7 +228,7 @@ func EventsForMonth(writter http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	events := api.Calendar.GetEventPerDay(date, userID)
+	events := api.Calendar.GetEventPerMonth(date, userID)
 	for _, event := range events {
 		js, err := json.MarshalIndent(event, "", "\t")
 		if err != nil {
@@ -238,5 +236,4 @@ func EventsForMonth(writter http.ResponseWriter, request *http.Request) {
 		}
 		writter.Write(js)
 	}
-	writter.WriteHeader(http.StatusOK)
 }
